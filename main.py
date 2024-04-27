@@ -19,17 +19,33 @@ def parse_code(parser: Parser, code: str):
 
 
 def main():
-    with open("sample_code.py", "r") as f:
+    with open("samples/sample_code.py", "r") as f:
         py_code = f.read()
 
     tree = parse_code(py_parser, py_code)
     root = tree.root_node
-    function_node = root.child_count
-    # function_body_node = function_node.child_by_field_name("body")
-    # if_stat_node = function_body_node.child(0)
-    # cond = if_stat_node.child_by_field_name("condition")
-    print(function_node)
+    for chiled in root.children:
+        function_body_node = chiled.child_by_field_name("body")
+        for child in function_body_node.children:
+            cond = child.child_by_field_name("condition")
+            if cond is not None:
+                print(f"cond: {py_code[cond.start_byte:cond.end_byte]}")
+                print(f"{cond.sexp()=}")
+                
+            consq = child.child_by_field_name("consequence")
+            if consq is not None:
+                print(f"consq: {py_code[consq.start_byte:consq.end_byte]}")
+            alter = child.child_by_field_name("alternative")
+            if alter is not None:
+                print(f"alter: {py_code[alter.start_byte:alter.end_byte]}")
+            
+
+    #         # print(cpp_code[cond.start_byte:cond.end_byte])
+    #         # print(f"{if_stat_node=}")
+    #         # print(if_stat_node.sexp())
+    #         print(f"{child.sexp()}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
+# %%
